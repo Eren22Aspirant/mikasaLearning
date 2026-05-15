@@ -1,12 +1,23 @@
 
 { // Block scope prevents "Identifier already declared" errors
-    const apiKey = "AIzaSyDZrJtXceW-gW8oT1snCqJGJDj3_jRSfZA"; 
+    // const apiKey = ""; 
+    // 1. Remove the hardcoded key
+let apiKey = localStorage.getItem('gemini_api_key'); 
 
-    let pieInstance, lineInstance, globalData;
-
-    // Attach to window so HTML onclick can find it
-    window.runAudit = async function() {
-        const q = document.getElementById('searchInput').value.trim();
+async function runAudit() {
+    // 2. Check if the key exists, if not, ask for it
+    if (!apiKey) {
+        apiKey = prompt("Please enter your Google Gemini API Key to run the audit (it is saved locally in your browser):");
+        if (apiKey) {
+            localStorage.setItem('gemini_api_key', apiKey);
+        } else {
+            alert("API Key is required to run the audit.");
+            return;
+        }
+    }
+    
+    // ... rest of your runAudit function
+     const q = document.getElementById('searchInput').value.trim();
         if (!q) return;
 
         document.getElementById('idleState').classList.add('hidden');
@@ -26,7 +37,33 @@
             if (load) load.classList.add('hidden');
             document.getElementById('idleState').classList.remove('hidden');
         }
-    };
+}
+
+    let pieInstance, lineInstance, globalData;
+
+    // Attach to window so HTML onclick can find it
+    // window.runAudit = async function() {
+    //     const q = document.getElementById('searchInput').value.trim();
+    //     if (!q) return;
+
+    //     document.getElementById('idleState').classList.add('hidden');
+    //     document.getElementById('dashboard').classList.add('hidden');
+    //     const load = document.getElementById('loadingState');
+    //     const statusText = document.getElementById('auditStatus');
+    //     if (load) load.classList.remove('hidden');
+
+    //     if(statusText) statusText.textContent = "Connecting to Gemini 2.0 Flash...";
+        
+    //     try {
+    //         globalData = await fetchAI(q);
+    //         render(globalData);
+    //     } catch (e) {
+    //         console.error("Audit Execution Failure:", e);
+    //         alert("Error: " + e.message);
+    //         if (load) load.classList.add('hidden');
+    //         document.getElementById('idleState').classList.remove('hidden');
+    //     }
+    // };
 
     async function fetchAI(company) {
         const sys = `High-Audit Command Analysis: Research ${company} in CANADA. Provide punchy Command Summaries. Return ONLY clean JSON.`;
